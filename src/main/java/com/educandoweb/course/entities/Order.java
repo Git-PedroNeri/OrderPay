@@ -40,6 +40,10 @@ public class Order implements Entidade, Serializable {
 	private Integer orderStatus;
 
 	@ManyToOne
+	/*
+	 * O join Column faz com que na tabela Order tenha uma coluna referenciando o id
+	 * do cliente
+	 */
 	@JoinColumn(name = "client_id")
 	private User client;
 
