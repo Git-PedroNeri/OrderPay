@@ -140,4 +140,15 @@ public class Order implements Entidade, Serializable {
 		return true;
 	}
 
+	public Double getTotall() {
+
+		Double sum2 = items.stream().mapToDouble(x -> x.getSubTotal()).sum();
+
+		Double sum = 0.0;
+		for (OrderItem itens : items) {
+			sum += itens.getSubTotal();
+		}
+		return sum2;
+	}
+
 }
