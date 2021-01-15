@@ -45,11 +45,11 @@ public class Order implements Entidade, Serializable {
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
 
-	@ManyToOne
 	/*
 	 * O join Column faz com que na tabela Order tenha uma coluna referenciando o id
 	 * do cliente
 	 */
+	@ManyToOne
 	@JoinColumn(name = "client_id")
 	private User client;
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
+import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 
 /**
  * @author pedro.neri
@@ -17,13 +18,14 @@ import com.educandoweb.course.repositories.UserRepository;
 public class UserService {
 
 	@Autowired
-	private UserRepository userRep;
+	private UserRepository userRepository;
+	private User updateData;
 
 	/**
 	 * @return
 	 */
 	public List<User> findAll() {
-		return userRep.findAll();
+		return userRepository.findAll();
 	}
 
 	/**
@@ -31,8 +33,8 @@ public class UserService {
 	 * @return
 	 */
 	public User findById(Long id) {
-		Optional<User> optionalUser = userRep.findById(id);
-		return optionalUser.get();
+		Optional<User> optionalUser = userRepository.findById(id);
+		return optionalUser.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	/**
@@ -40,7 +42,7 @@ public class UserService {
 	 * @return
 	 */
 	public User insert(User user) {
-		return userRep.save(user);
+		return userRepository.save(user);
 
 	}
 
@@ -48,7 +50,7 @@ public class UserService {
 	 * @param id
 	 */
 	public void delete(Long id) {
-		userRep.deleteById(id);
+		userRepository.deleteById(id);
 	}
 
 	/**
@@ -56,11 +58,10 @@ public class UserService {
 	 * @param user
 	 * @return
 	 */
-	public User update(Long id, User user) {
-
-		User entity = userRep.getOne(id);
-		updateData(entity, user);
-		return userRep.save(user);
+	public User update(Long id, User userContainingNewInfo) {
+		User userToUpdate = userRepository.getOne(id);
+		updateData(userToUpdate, userContainingNewInfo);
+		return userRepository.save(userToUpdate);
 
 	}
 
@@ -68,10 +69,17 @@ public class UserService {
 	 * @param entity
 	 * @param user
 	 */
-	private void updateData(User entity, User user) {
-		entity.setName(user.getName());
-		entity.setEmail(user.getEmail());
-		entity.setPhone(user.getPhone());
+	private void updateData(User userToUpdate, User userWhithNewInfos) {
+		if (userWhithNewInfos.getName() != null) {
+			userToUpdate.setName(userWhithNewInfos.getName());
+		}
+		if (userWhithNewInfos.getEmail() != null) {
+			userToUpdate.setEmail(userWhithNewInfos.getEmail());
+
+		}
+		if (userWhithNewInfos.getPhone() != null) {
+			userToUpdate.setPhone(userWhithNewInfos.getPhone());
+		}
 
 	}
 

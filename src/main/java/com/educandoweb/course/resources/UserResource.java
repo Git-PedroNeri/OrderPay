@@ -54,10 +54,10 @@ public class UserResource {
 	 * @return
 	 */
 	@PostMapping
-	public ResponseEntity<User> insert(@RequestBody User obj) {
-		obj = userService.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).body(obj);
+	public ResponseEntity<User> insert(@RequestBody User user) {
+		user = userService.insert(user);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
+		return ResponseEntity.created(uri).body(user);
 	}
 
 	/**
@@ -71,9 +71,9 @@ public class UserResource {
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
-		user = userService.update(id, user);
-		return ResponseEntity.ok(user);
+	public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User userContainingNewInfo) {
+		userContainingNewInfo = userService.update(id, userContainingNewInfo);
+		return ResponseEntity.ok(userContainingNewInfo);
 
 	}
 
