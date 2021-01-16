@@ -3,11 +3,16 @@ package com.educandoweb.course.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
+import com.educandoweb.course.services.exceptions.DataBaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 
 /**
@@ -50,7 +55,13 @@ public class UserService {
 	 * @param id
 	 */
 	public void delete(Long id) {
-		userRepository.deleteById(id);
+		try {
+			userRepository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		} catch (DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
+		}
 	}
 
 	/**
@@ -59,9 +70,14 @@ public class UserService {
 	 * @return
 	 */
 	public User update(Long id, User userContainingNewInfo) {
-		User userToUpdate = userRepository.getOne(id);
-		updateData(userToUpdate, userContainingNewInfo);
-		return userRepository.save(userToUpdate);
+		try {
+			User userToUpdate = userRepository.getOne(id);
+			updateData(userToUpdate, userContainingNewInfo);
+			return userRepository.save(userToUpdate);
+
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 
 	}
 
